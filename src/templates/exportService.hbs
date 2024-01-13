@@ -73,6 +73,10 @@ export class {{{name}}}{{{@root.postfix}}} {
 	public {{{name}}}({{>parameters}}): Observable<{{>result}}> {
 		return this.httpRequest.request({
 	{{else}}
+	{{#equals @root.httpClient 'nextjs'}}
+	public {{{name}}}({{>parameters}}, next: NextFetchRequestConfig | undefined): Observable<{{>result}}> {
+		return this.httpRequest.request({
+	{{else}}
 	public {{{name}}}({{>parameters}}): CancelablePromise<{{>result}}> {
 		return this.httpRequest.request({
 	{{/equals}}
@@ -81,7 +85,11 @@ export class {{{name}}}{{{@root.postfix}}} {
 	public {{{name}}}({{>parameters}}): Observable<{{>result}}> {
 		return __request(OpenAPI, this.http, {
 	{{else}}
+	{{#equals @root.httpClient 'nextjs'}}
 	public static {{{name}}}({{>parameters}}): CancelablePromise<{{>result}}> {
+		return __request(OpenAPI, {
+	{{else}}
+	public static {{{name}}}({{>parameters}}, next: NextFetchRequestConfig | undefined): CancelablePromise<{{>result}}> {
 		return __request(OpenAPI, {
 	{{/equals}}
 	{{/if}}
@@ -143,7 +151,12 @@ export class {{{name}}}{{{@root.postfix}}} {
 				{{/each}}
 			},
 			{{/if}}
+		{{#if @root.exportClient}}
+		{{#equals @root.httpClient 'nextjs'}}
+		}, next);
+		{{else}}
 		});
+		{{/if}}
 	}
 
 	{{/each}}
